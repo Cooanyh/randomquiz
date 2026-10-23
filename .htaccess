@@ -1,0 +1,32 @@
+# Apache protections for local configuration, runtime data, and package files.
+<IfModule mod_authz_core.c>
+    <FilesMatch "(config\.php|users\.json|rate_limits\.json|composer\.(json|lock))$">
+        Require all denied
+    </FilesMatch>
+    <FilesMatch "\.json$">
+        Require all denied
+    </FilesMatch>
+    <FilesMatch "^manifest\.json$">
+        Require all granted
+    </FilesMatch>
+</IfModule>
+
+# Apache 2.2 compatibility.
+<IfModule !mod_authz_core.c>
+    <FilesMatch "(config\.php|users\.json|rate_limits\.json|composer\.(json|lock)|\.json)$">
+        Order Allow,Deny
+        Deny from all
+    </FilesMatch>
+    <FilesMatch "^manifest\.json$">
+        Order Deny,Allow
+        Allow from all
+    </FilesMatch>
+</IfModule>
+
+# Block private runtime data and dependencies if Apache serves this directory.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(?:data|vendor|\.git|doc)/ - [F,L,NC]
+</IfModule>
+
+Options -Indexes

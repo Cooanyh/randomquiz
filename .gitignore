@@ -1,0 +1,7 @@
+.DS_Store
+*.log
+config.php
+/data/
+/vendor/
+/node_modules/
+/archive/
